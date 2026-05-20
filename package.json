@@ -1,0 +1,28 @@
+{
+  "name": "pj_spacetattoo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "expo": "^55.0.15",
+    "expo-constants": "~55.0.14",
+    "expo-linking": "~55.0.13",
+    "expo-router": "~55.0.12",
+    "expo-status-bar": "~55.0.5",
+    "lucide-react": "^1.8.0",
+    "pg": "^8.20.0",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-screens": "~4.23.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.10",
+    "typescript": "~5.9.2"
+  }
+}
