@@ -11,7 +11,8 @@ import Register from '../view/RegisterApp';
 import Announcement from "../view/AnnouncementApp";
 import Chat from "../view/SelectChatApp";
 import Talk_Chat from '../view/TalkChatApp';
-import SelectAnnouncement from '../view/SelectAnnouncementApp';
+import AnnouncementView from '../view/AnnouncementDateilsApp';
+import User from '../view/userApp';
 
 // Importação do Controller
 import { useAppController } from '../controllers/useAppController'; 
@@ -24,6 +25,7 @@ type RootStackParamList = {
   Announcement: undefined;
   Chat: undefined;
   Talk_Chat: { chatId: number };
+  User: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -54,12 +56,13 @@ export default function App() {
         <Stack.Screen name="Announcement" component={Announcement} />
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="Talk_Chat" component={Talk_Chat} />
+        <Stack.Screen name="User" component={User} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-// Componente interno da tela de Início (Geralmente recomendaria colocar em um arquivo separado chamado InicioView.tsx, mas mantive aqui para facilitar)
+// Componente interno da tela de Início
 function Inicio({ navigation, route }: { navigation: any; route: any }) {
   const { user } = route.params || {}; 
   
@@ -67,7 +70,7 @@ function Inicio({ navigation, route }: { navigation: any; route: any }) {
     <View style={styles.container}>
       <View style={styles.content}>
         <Header navigation={navigation} />
-        <SelectAnnouncement />
+        <AnnouncementView />
         <StatusBar />
       </View>
       <FooterSelection FooterSelection={navigation} />

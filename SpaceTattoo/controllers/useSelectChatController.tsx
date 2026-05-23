@@ -34,7 +34,7 @@ export function useSelectChatController() {
 
     const { data: chatRelations, error: chatsError } = await supabase
       .from('chat_relation')
-      .select('id_chat, id_env1, id_env2, id_announcement')
+      .select('id_chat, id_env1, id_env2, id_announcement_fk')
       .or(`id_env1.eq.${user.id_user},id_env2.eq.${user.id_user}`);
 
     if (chatsError) {
@@ -42,22 +42,40 @@ export function useSelectChatController() {
       return;
     }
 
-    // Agrupar por participantes + anúncio
+    // Agrupar por dupla de participantes (independente do anúncio)
     const chatsPorGrupo = new Map<string, any[]>();
 
     chatRelations.forEach((chat: any) => {
-      const key = `${[chat.id_env1, chat.id_env2].sort((a, b) => a - b).join('_')}_ann_${chat.id_announcement_fk}`;
+      const key = `${[chat.id_env1, chat.id_env2].sort((a, b) => a - b).join('_')}`;
       if (!chatsPorGrupo.has(key)) {
         chatsPorGrupo.set(key, []);
       }
       chatsPorGrupo.get(key)!.push(chat);
     });
 
+    // Coleta todos os IDs dos outros participantes para buscar seus nomes
+    const userIds = Array.from(new Set(chatRelations.map((chat: any) => 
+      chat.id_env1 === user.id_user ? chat.id_env2 : chat.id_env1
+    )));
+
+    const usersMap = new Map<number, string>();
+    if (userIds.length > 0) {
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('id_user, name')
+        .in('id_user', userIds);
+
+      if (!usersError && usersData) {
+        usersData.forEach((u: any) => usersMap.set(u.id_user, u.name));
+      }
+    }
+
     // Busca assíncrona paralela da última mensagem de cada grupo
     const chatsComMensagens = await Promise.all(
       Array.from(chatsPorGrupo.values()).map(async (chatsDoGrupo: any[]) => {
         const chat = chatsDoGrupo[0];
         const outroParticipante = chat.id_env1 === user.id_user ? chat.id_env2 : chat.id_env1;
+        const nomeOutro = usersMap.get(outroParticipante) || `Usuário ${outroParticipante}`;
 
         const { data: mensagens, error: msgError } = await supabase
           .from('chat')
@@ -73,8 +91,8 @@ export function useSelectChatController() {
         const ultimaMensagem = mensagens?.[0];
 
         return {
-          id: ultimaMensagem?.id_chat_fk || chatsDoGrupo[0].id_chat,
-          name: `Anúncio ${chat.id_announcement} - Usuário ${outroParticipante}`,
+          id: chatsDoGrupo[0].id_chat, // Usamos o primeiro ID de chat do grupo como identificador
+          name: nomeOutro,
           lastMessage: ultimaMensagem?.mensagem || 'Sem mensagens',
           time: ultimaMensagem?.time
             ? new Date(ultimaMensagem.time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })

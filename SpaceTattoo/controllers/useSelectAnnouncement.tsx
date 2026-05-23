@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 
 // Definindo o tipo/modelo do Anúncio (Model)
 export type Announcement = {
-  id_announcement: string;
+  id_announcemen: string;
   title: string;
   info: string;
 };

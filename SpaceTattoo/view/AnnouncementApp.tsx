@@ -16,6 +16,7 @@ export default function Announcement({ navigation }: { navigation: any }) {
     selectedCategory,
     setSelectedCategory,
     categories,
+    handleCreateAnnouncement,
   } = useAnnouncementController();
 
   return (
@@ -56,7 +57,7 @@ export default function Announcement({ navigation }: { navigation: any }) {
           keyboardType="numeric"
         />
         <TouchableOpacity style={{ backgroundColor: '#007BFF', padding: 10, borderRadius: 5, alignItems: 'center' }}
-          onPress={useAnnouncementController().handleCreateAnnouncement}>
+          onPress={handleCreateAnnouncement}>
           <Text>Salvar Anúncio</Text>
         </TouchableOpacity>
       </View>

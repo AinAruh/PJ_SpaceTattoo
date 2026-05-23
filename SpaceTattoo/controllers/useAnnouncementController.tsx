@@ -31,18 +31,22 @@ export function useAnnouncementController() {
 
 
   const handleCreateAnnouncement = async () => {
+    const isPrestServ = selectedCategory === 'prest_serv = true';
+    const isLocal = selectedCategory === 'local = true';
+
     supabase.from('announcement').insert({
       title,
       info: description,
       valor: value,
-      id_user_fk: parseInt(user?.id), 
+      id_user_fk: user?.id_user ? parseInt(user.id_user) : null,
+      prest_serv: isPrestServ,
+      local: isLocal,
     }).then(() => {
       console.log("Anúncio criado com sucesso!");
     });
 
     console.log("Criando anúncio com:", { title, info: description, valor: value, selectedCategory });
   };
-  handleCreateAnnouncement();
 
   return {
     user,

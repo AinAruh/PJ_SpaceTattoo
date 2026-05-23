@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TextInput, ScrollView, StyleSheet, ActivityIndicator, Image } from "react-native";
+import { Text, View, TextInput, ScrollView, StyleSheet, ActivityIndicator, Image, TouchableOpacity } from "react-native";
 import { useAnnouncementViewController } from '../controllers/useAnnouncementViewController';
 
 export default function AnnouncementView() {
@@ -7,7 +7,8 @@ export default function AnnouncementView() {
     announcements, 
     loading, 
     searchQuery, 
-    setSearchQuery 
+    setSearchQuery,
+    handleStartChat
   } = useAnnouncementViewController();
 
   if (loading) {
@@ -33,7 +34,7 @@ export default function AnnouncementView() {
           <Text style={styles.emptyText}>Nenhum anúncio disponível.</Text>
         ) : (
           announcements.map((item) => (
-            <View key={item.id_announcement} style={styles.card}>
+            <View key={item.id_announcemen} style={styles.card}>
               {/* Renderiza a imagem apenas se ela existir */}
               {item.image ? (
                 <Image source={{ uri: item.image }} style={styles.image} />
@@ -41,6 +42,13 @@ export default function AnnouncementView() {
               
               <Text style={styles.title}>{item.title}</Text>
               <Text style={styles.info}>{item.info}</Text>
+
+              <TouchableOpacity 
+                style={styles.chatButton} 
+                onPress={() => handleStartChat(item.id_user_fk, parseInt(item.id_announcemen))}
+              >
+                <Text style={styles.chatButtonText}>Iniciar Chat</Text>
+              </TouchableOpacity>
             </View>
           ))
         )}
@@ -93,6 +101,19 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 14,
     color: '#666',
+  },
+  chatButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  chatButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   emptyText: {
     textAlign: 'center',
