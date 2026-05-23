@@ -12,6 +12,7 @@ import Announcement from "../view/AnnouncementApp";
 import Chat from "../view/SelectChatApp";
 import Talk_Chat from '../view/TalkChatApp';
 import AnnouncementView from '../view/AnnouncementDateilsApp';
+import SelectAnnouncement from '../view/SelectAnnouncementApp';
 import User from '../view/userApp';
 
 // Importação do Controller
@@ -26,6 +27,8 @@ type RootStackParamList = {
   Chat: undefined;
   Talk_Chat: { chatId: number };
   User: undefined;
+  SelectAnnouncement: undefined;
+  AnnouncementView: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +60,8 @@ export default function App() {
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="Talk_Chat" component={Talk_Chat} />
         <Stack.Screen name="User" component={User} />
+        <Stack.Screen name="SelectAnnouncement" component={SelectAnnouncement} />
+        <Stack.Screen name="AnnouncementView" component={AnnouncementView} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -70,7 +75,7 @@ function Inicio({ navigation, route }: { navigation: any; route: any }) {
     <View style={styles.container}>
       <View style={styles.content}>
         <Header navigation={navigation} />
-        <AnnouncementView />
+        <SelectAnnouncement />
         <StatusBar />
       </View>
       <FooterSelection FooterSelection={navigation} />

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 export function useAnnouncementController() {
+  const navigation = useNavigation<any>();
   const [user, setUser] = useState<any>(null);
   
   // Estados para controlar o formulário do anúncio
@@ -34,18 +35,33 @@ export function useAnnouncementController() {
     const isPrestServ = selectedCategory === 'prest_serv = true';
     const isLocal = selectedCategory === 'local = true';
 
-    supabase.from('announcement').insert({
-      title,
-      info: description,
-      valor: value,
-      id_user_fk: user?.id_user ? parseInt(user.id_user) : null,
-      prest_serv: isPrestServ,
-      local: isLocal,
-    }).then(() => {
-      console.log("Anúncio criado com sucesso!");
-    });
+    try {
+      const { error } = await supabase.from('announcement').insert({
+        title,
+        info: description,
+        valor: value,
+        id_user_fk: user?.id_user ? parseInt(user.id_user) : null,
+        prest_serv: isPrestServ,
+        local: isLocal,
+      });
 
-    console.log("Criando anúncio com:", { title, info: description, valor: value, selectedCategory });
+      if (error) {
+        alert("Erro ao criar anúncio: " + error.message);
+        return;
+      }
+
+      console.log("Anúncio criado com sucesso!");
+      
+      // Limpa os campos após a criação
+      setTitle('');
+      setDescription('');
+      setValue('');
+
+      // Navega para a tela inicial (onde está o AnnouncementView que lista os anúncios com botão do chat)
+      navigation.navigate('Inicio');
+    } catch (err: any) {
+      console.error("Erro ao registrar anúncio:", err.message || err);
+    }
   };
 
   return {
