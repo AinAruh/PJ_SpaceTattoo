@@ -54,8 +54,16 @@ export default function App() {
           options={{ headerShown: false }} 
           initialParams={{ user }} 
         />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen 
+          name="Login" 
+          component={Login} 
+          options={{ headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="Register" 
+          component={Register} 
+          options={{ headerShown: false }} 
+        />
         <Stack.Screen name="Announcement" component={Announcement} />
         <Stack.Screen name="Chat" component={Chat} />
         <Stack.Screen name="Talk_Chat" component={Talk_Chat} />
