@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, TextInput, Image, StyleSheet, Switch, ScrollView, ActivityIndicator } from 'react-native';
 import { useUserController } from '../controllers/useUserController';
-import { Mail, BookOpen, Settings, LogOut, CheckCircle, Award } from 'lucide-react-native';
+import { Mail, BookOpen, Settings, LogOut, CheckCircle, Award, Camera } from 'lucide-react-native';
 
 export default function User() {
   const {
@@ -20,6 +20,7 @@ export default function User() {
     setServ,
     avatarUrl,
     handleCancel,
+    handleSelectAvatar,
     handleUpdateProfile,
     handleLogout,
   } = useUserController();
@@ -28,7 +29,18 @@ export default function User() {
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContainer}>
       {/* Header do Perfil */}
       <View style={styles.headerSection}>
-        <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+        <View style={styles.avatarWrapper}>
+          <Image source={{ uri: avatarUrl }} style={styles.avatar} />
+          {isEditing && (
+            <TouchableOpacity 
+              style={styles.avatarEditBadge} 
+              onPress={handleSelectAvatar}
+              activeOpacity={0.8}
+            >
+              <Camera size={14} color="#ffffff" />
+            </TouchableOpacity>
+          )}
+        </View>
         
         {isEditing ? (
           <View style={styles.inputGroupHeader}>
@@ -53,7 +65,7 @@ export default function User() {
           /* MODO EDIÇÃO */
           <View style={styles.card}>
             <Text style={styles.cardTitle}>
-              <Settings size={18} color="#FF6A00" style={styles.cardTitleIcon} />
+              <Settings size={18} color="#a855f7" style={styles.cardTitleIcon} />
               Editar Informações
             </Text>
 
@@ -93,7 +105,7 @@ export default function User() {
               <Switch 
                 value={prop}
                 onValueChange={setProp}
-                trackColor={{ false: '#3e3e3e', true: '#FF6A00' }}
+                trackColor={{ false: '#3e3e3e', true: '#a855f7' }}
                 thumbColor={prop ? '#fff' : '#f4f3f4'}
               />
             </View>
@@ -103,7 +115,7 @@ export default function User() {
               <Switch 
                 value={serv}
                 onValueChange={setServ}
-                trackColor={{ false: '#3e3e3e', true: '#FF6A00' }}
+                trackColor={{ false: '#3e3e3e', true: '#a855f7' }}
                 thumbColor={serv ? '#fff' : '#f4f3f4'}
               />
             </View>
@@ -137,7 +149,7 @@ export default function User() {
             {/* Card de Informações Básicas */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>
-                <Mail size={18} color="#FF6A00" style={styles.cardTitleIcon} />
+                <Mail size={18} color="#a855f7" style={styles.cardTitleIcon} />
                 Contato
               </Text>
               <Text style={styles.infoText}>{email || 'Sem e-mail cadastrado.'}</Text>
@@ -146,7 +158,7 @@ export default function User() {
             {/* Card de Biografia */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>
-                <BookOpen size={18} color="#FF6A00" style={styles.cardTitleIcon} />
+                <BookOpen size={18} color="#a855f7" style={styles.cardTitleIcon} />
                 Biografia
               </Text>
               <Text style={styles.infoText}>{descri || 'Escreva algo sobre você clicando em "Editar Perfil"!'}</Text>
@@ -155,18 +167,18 @@ export default function User() {
             {/* Card de Preferências / Tags */}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>
-                <Award size={18} color="#FF6A00" style={styles.cardTitleIcon} />
+                <Award size={18} color="#a855f7" style={styles.cardTitleIcon} />
                 Preferências
               </Text>
               
               <View style={styles.tagContainer}>
                 <View style={[styles.tag, prop && styles.tagActive]}>
-                  {prop && <CheckCircle size={14} color="#FF6A00" />}
+                  {prop && <CheckCircle size={14} color="#a855f7" />}
                   <Text style={[styles.tagText, prop && styles.tagTextActive]}>Proprietário de Estúdio</Text>
                 </View>
 
                 <View style={[styles.tag, serv && styles.tagActive]}>
-                  {serv && <CheckCircle size={14} color="#FF6A00" />}
+                  {serv && <CheckCircle size={14} color="#a855f7" />}
                   <Text style={[styles.tagText, serv && styles.tagTextActive]}>Prestador de Serviço</Text>
                 </View>
               </View>
@@ -192,7 +204,7 @@ export default function User() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Ultra dark background theme
+    backgroundColor: '#07070a', // Cosmic dark background
   },
   scrollContainer: {
     paddingBottom: 40,
@@ -200,7 +212,7 @@ const styles = StyleSheet.create({
   headerSection: {
     alignItems: 'center',
     paddingVertical: 35,
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#12121a', // Cohesive cosmic card
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
     elevation: 6,
@@ -208,14 +220,37 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(168, 85, 247, 0.15)',
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: 16,
   },
   avatar: {
     width: 110,
     height: 110,
     borderRadius: 55,
     borderWidth: 3,
-    borderColor: '#FF6A00', // Matches OLX orange theme
-    marginBottom: 16,
+    borderColor: '#a855f7', // cosmic purple
+  },
+  avatarEditBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#a855f7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#12121a', // matches header background
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4,
   },
   userName: {
     fontSize: 24,
@@ -231,12 +266,17 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
-    backgroundColor: '#1e1e1e',
-    borderRadius: 12,
+    backgroundColor: '#12121a', // Cosmic card
+    borderRadius: 16,
     padding: 16,
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#2d2d2d',
+    borderColor: 'rgba(168, 85, 247, 0.15)', // Cosmic glow border
+    shadowColor: '#a855f7',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   cardTitle: {
     fontSize: 16,
@@ -271,8 +311,8 @@ const styles = StyleSheet.create({
     borderColor: '#3e3e3e',
   },
   tagActive: {
-    borderColor: '#FF6A00',
-    backgroundColor: 'rgba(255, 106, 0, 0.15)',
+    borderColor: '#a855f7',
+    backgroundColor: 'rgba(168, 85, 247, 0.15)',
   },
   tagText: {
     fontSize: 13,
@@ -280,7 +320,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   tagTextActive: {
-    color: '#FF6A00',
+    color: '#a855f7',
     fontWeight: '600',
   },
   inputGroupHeader: {
@@ -297,22 +337,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   input: {
-    backgroundColor: '#2b2b2b',
-    borderRadius: 8,
+    backgroundColor: '#1c1c27', // Darker cosmic input
+    borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
     color: '#fff',
     fontSize: 15,
-    borderWidth: 1,
-    borderColor: '#3e3e3e',
+    borderWidth: 1.5,
+    borderColor: 'rgba(168, 85, 247, 0.2)',
     width: '100%',
   },
   inputHeader: {
     textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
-    backgroundColor: '#2a2a2a',
-    borderColor: '#FF6A00',
+    backgroundColor: '#1c1c27',
+    borderColor: '#a855f7',
   },
   textArea: {
     height: 100,
@@ -337,16 +377,16 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   editButton: {
-    backgroundColor: '#FF6A00',
-    borderRadius: 8,
+    backgroundColor: '#a855f7',
+    borderRadius: 10,
     height: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 12,
     elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowColor: '#a855f7',
+    shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
   },

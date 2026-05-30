@@ -16,9 +16,71 @@ export default function AnnouncementView() {
 
   const renderBase64Image = (base64Str: string | null | undefined) => {
     if (!base64Str) return null;
+    
+    // If it's already a full data URI, return it
     if (base64Str.startsWith('data:image')) {
       return { uri: base64Str };
     }
+
+    // Normalize and clean hex string from Postgres bytea
+    let cleanHex = base64Str;
+    if (cleanHex.startsWith('\\\\x')) {
+      cleanHex = cleanHex.substring(3);
+    } else if (cleanHex.startsWith('\\x')) {
+      cleanHex = cleanHex.substring(2);
+    } else if (cleanHex.startsWith('x')) {
+      cleanHex = cleanHex.substring(1);
+    }
+
+    // Check if the cleaned string is indeed a hex string
+    const isHex = /^[0-9a-fA-F]+$/.test(cleanHex);
+    
+    if (isHex && cleanHex.length > 0) {
+      try {
+        // Detect magic bytes to choose correct MIME type
+        let mimeType = 'image/png'; // default fallback
+        if (cleanHex.startsWith('89504e47')) {
+          mimeType = 'image/png';
+        } else if (cleanHex.startsWith('ffd8ff')) {
+          mimeType = 'image/jpeg';
+        } else if (cleanHex.startsWith('47494638')) {
+          mimeType = 'image/gif';
+        } else if (cleanHex.startsWith('52494646')) {
+          mimeType = 'image/webp';
+        }
+
+        const len = cleanHex.length;
+        const bytes = new Uint8Array(len / 2);
+        for (let i = 0; i < len; i += 2) {
+          bytes[i / 2] = parseInt(cleanHex.substring(i, i + 2), 16);
+        }
+
+        // Convert byte array to Base64
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+        let base64 = '';
+        const bytesLength = bytes.length;
+        for (let i = 0; i < bytesLength; i += 3) {
+          const c1 = bytes[i];
+          const c2 = i + 1 < bytesLength ? bytes[i + 1] : NaN;
+          const c3 = i + 2 < bytesLength ? bytes[i + 2] : NaN;
+          
+          const byte1 = c1 >> 2;
+          const byte2 = ((c1 & 3) << 4) | (isNaN(c2) ? 0 : c2 >> 4);
+          const byte3 = isNaN(c2) ? 64 : ((c2 & 15) << 2) | (isNaN(c3) ? 0 : c3 >> 6);
+          const byte4 = isNaN(c3) ? 64 : c3 & 63;
+          
+          base64 += chars.charAt(byte1) + chars.charAt(byte2) + 
+                    (byte3 === 64 ? '=' : chars.charAt(byte3)) + 
+                    (byte4 === 64 ? '=' : chars.charAt(byte4));
+        }
+
+        return { uri: `data:${mimeType};base64,${base64}` };
+      } catch (error) {
+        console.error('Error converting hex to base64:', error);
+      }
+    }
+
+    // Default fallback: assume it is a raw base64 string
     return { uri: `data:image/png;base64,${base64Str}` };
   };
 

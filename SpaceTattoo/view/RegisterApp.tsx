@@ -7,7 +7,10 @@ import {
   TextInput, 
   StyleSheet, 
   ActivityIndicator,
-  SafeAreaView
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowLeft, ArrowRight } from 'lucide-react-native';
 import { useRegisterController } from '../controllers/useRegisterController';
@@ -35,127 +38,138 @@ export default function Register() {
       <View style={styles.nebulaGlowLeft} pointerEvents="none" />
       <View style={styles.nebulaGlowRight} pointerEvents="none" />
 
-      <View style={styles.container}>
-        {/* Back to Login Button */}
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={handleGoToLogin}
-          activeOpacity={0.7}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.keyboardAvoid}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <ArrowLeft size={20} color="#9ca3af" style={styles.backIcon} />
-          <Text style={styles.backButtonText}>Voltar para o Login</Text>
-        </TouchableOpacity>
+          <View style={styles.container}>
+            {/* Back to Login Button */}
+            <TouchableOpacity 
+              style={styles.backButton} 
+              onPress={handleGoToLogin}
+              activeOpacity={0.7}
+            >
+              <ArrowLeft size={20} color="#9ca3af" style={styles.backIcon} />
+              <Text style={styles.backButtonText}>Voltar para o Login</Text>
+            </TouchableOpacity>
 
-        {/* Logo & Header */}
-        <View style={styles.headerContainer}>
-          <View style={styles.logoBadge}>
-            <Sparkles size={28} color="#a855f7" />
-          </View>
-          <Text style={styles.logoText}>CRIAR CONTA</Text>
-          <Text style={styles.subtitleText}>Comece a planejar sua próxima obra-prima cósmica.</Text>
-        </View>
-
-        {/* Register Card */}
-        <View style={styles.card}>
-          <Text style={styles.welcomeText}>Vamos Começar!</Text>
-          <Text style={styles.cardSubtitle}>Preencha seus dados cósmicos para continuar</Text>
-
-          {/* Name Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Nome do Usuário</Text>
-            <View style={styles.inputWrapper}>
-              <User size={20} color="#6b7280" style={styles.inputIcon} />
-              <TextInput 
-                placeholder='Ex: Neil Armstrong' 
-                style={styles.input} 
-                placeholderTextColor='#4b5563' 
-                value={name} 
-                onChangeText={setName}
-              />
+            {/* Logo & Header */}
+            <View style={styles.headerContainer}>
+              <View style={styles.logoBadge}>
+                <Sparkles size={28} color="#a855f7" />
+              </View>
+              <Text style={styles.logoText}>CRIAR CONTA</Text>
+              <Text style={styles.subtitleText}>Comece a planejar sua próxima obra-prima cósmica.</Text>
             </View>
-          </View>
 
-          {/* Email Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>E-mail</Text>
-            <View style={styles.inputWrapper}>
-              <Mail size={20} color="#6b7280" style={styles.inputIcon} />
-              <TextInput 
-                placeholder='Ex: astronauta@space.com' 
-                style={styles.input} 
-                placeholderTextColor='#4b5563' 
-                value={email} 
-                onChangeText={setEmail} 
-                autoCapitalize="none"
-                keyboardType="email-address"
-              />
-            </View>
-          </View>
+            {/* Register Card */}
+            <View style={styles.card}>
+              <Text style={styles.welcomeText}>Vamos Começar!</Text>
+              <Text style={styles.cardSubtitle}>Preencha seus dados cósmicos para continuar</Text>
 
-          {/* Password Input */}
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Senha</Text>
-            <View style={styles.inputWrapper}>
-              <Lock size={20} color="#6b7280" style={styles.inputIcon} />
-              <TextInput 
-                placeholder='Crie uma senha forte' 
-                style={styles.input} 
-                placeholderTextColor='#4b5563' 
-                secureTextEntry={!showPassword} 
-                value={password} 
-                onChangeText={setPassword}
-              />
+              {/* Name Input */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Nome do Usuário</Text>
+                <View style={styles.inputWrapper}>
+                  <User size={20} color="#6b7280" style={styles.inputIcon} />
+                  <TextInput 
+                    placeholder='Ex: Neil Armstrong' 
+                    style={styles.input} 
+                    placeholderTextColor='#4b5563' 
+                    value={name} 
+                    onChangeText={setName}
+                  />
+                </View>
+              </View>
+
+              {/* Email Input */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>E-mail</Text>
+                <View style={styles.inputWrapper}>
+                  <Mail size={20} color="#6b7280" style={styles.inputIcon} />
+                  <TextInput 
+                    placeholder='Ex: astronauta@space.com' 
+                    style={styles.input} 
+                    placeholderTextColor='#4b5563' 
+                    value={email} 
+                    onChangeText={setEmail} 
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                  />
+                </View>
+              </View>
+
+              {/* Password Input */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Senha</Text>
+                <View style={styles.inputWrapper}>
+                  <Lock size={20} color="#6b7280" style={styles.inputIcon} />
+                  <TextInput 
+                    placeholder='Crie uma senha forte' 
+                    style={styles.input} 
+                    placeholderTextColor='#4b5563' 
+                    secureTextEntry={!showPassword} 
+                    value={password} 
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity 
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.eyeButton}
+                    activeOpacity={0.7}
+                  >
+                    {showPassword ? (
+                      <EyeOff size={20} color="#6b7280" />
+                    ) : (
+                      <Eye size={20} color="#6b7280" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Register Action Button */}
               <TouchableOpacity 
-                onPress={() => setShowPassword(!showPassword)}
-                style={styles.eyeButton}
-                activeOpacity={0.7}
+                style={[styles.buttonPrimary, loading && styles.buttonDisabled]} 
+                onPress={handleRegister} 
+                disabled={loading}
+                activeOpacity={0.8}
               >
-                {showPassword ? (
-                  <EyeOff size={20} color="#6b7280" />
+                {loading ? (
+                  <ActivityIndicator color="#ffffff" size="small" />
                 ) : (
-                  <Eye size={20} color="#6b7280" />
+                  <View style={styles.buttonInner}>
+                    <Text style={styles.buttonPrimaryText}>Confirmar Cadastro</Text>
+                    <ArrowRight size={18} color="#ffffff" style={styles.arrowIcon} />
+                  </View>
                 )}
               </TouchableOpacity>
-            </View>
-          </View>
 
-          {/* Register Action Button */}
-          <TouchableOpacity 
-            style={[styles.buttonPrimary, loading && styles.buttonDisabled]} 
-            onPress={handleRegister} 
-            disabled={loading}
-            activeOpacity={0.8}
-          >
-            {loading ? (
-              <ActivityIndicator color="#ffffff" size="small" />
-            ) : (
-              <View style={styles.buttonInner}>
-                <Text style={styles.buttonPrimaryText}>Confirmar Cadastro</Text>
-                <ArrowRight size={18} color="#ffffff" style={styles.arrowIcon} />
+              {/* Divider */}
+              <View style={styles.dividerContainer}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>ou</Text>
+                <View style={styles.dividerLine} />
               </View>
-            )}
-          </TouchableOpacity>
 
-          {/* Divider */}
-          <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>ou</Text>
-            <View style={styles.dividerLine} />
+              {/* Already have an account Button */}
+              <TouchableOpacity 
+                style={styles.buttonSecondary} 
+                onPress={handleGoToLogin}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.buttonSecondaryText}>Já tenho Conta (Entrar)</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Footer Text */}
+            <Text style={styles.footerCopyright}>© {new Date().getFullYear()} SpaceTattoo Studio</Text>
           </View>
-
-          {/* Already have an account Button */}
-          <TouchableOpacity 
-            style={styles.buttonSecondary} 
-            onPress={handleGoToLogin}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.buttonSecondaryText}>Já tenho Conta (Entrar)</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Footer Text */}
-        <Text style={styles.footerCopyright}>© {new Date().getFullYear()} SpaceTattoo Studio</Text>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -165,10 +179,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#07070a',
   },
-  container: {
+  keyboardAvoid: {
     flex: 1,
-    paddingHorizontal: 24,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+  },
+  container: {
+    width: '100%',
     zIndex: 1,
   },
   nebulaGlowLeft: {
