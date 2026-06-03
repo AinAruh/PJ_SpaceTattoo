@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTalkChatController } from '../controllers/useTalkChatController';
 
 export default function Talk_Chat({ route }: { route: any }) {
@@ -15,52 +16,64 @@ export default function Talk_Chat({ route }: { route: any }) {
   } = useTalkChatController(chatId);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.titulo}>Chat - Space Tattoo</Text>
-      </View>
+    
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.header}>
+          <Text style={styles.titulo}>Chat - Space Tattoo</Text>
+        </View>
 
-      <FlatList
-        data={conversas}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View 
-            style={[
-              styles.mensagem, 
-              item.id_env === user?.id_user ? styles.userMensagem : styles.atendenteMensagem
-            ]}
-          >
-            <Text style={styles.remetente}>{item.remetente || 'Usuário'}</Text>
-            <Text style={styles.texto}>{item.texto}</Text>
-            <Text style={styles.timestamp}>
-              {new Date(item.timestamp).toLocaleTimeString('pt-BR', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-              })}
-            </Text>
-          </View>
-        )}
-        style={styles.scrollView}
-      />
-
-      <View style={styles.inputContainer}>
-        <TextInput 
-          style={styles.input}
-          placeholder="Digite sua mensagem..."
-          placeholderTextColor="#999"
-          value={mensagem}
-          onChangeText={setMensagem}
+        <FlatList
+          data={conversas}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View 
+              style={[
+                styles.mensagem, 
+                item.id_env === user?.id_user ? styles.userMensagem : styles.atendenteMensagem
+              ]}
+            >
+              <Text style={styles.remetente}>{item.remetente || 'Usuário'}</Text>
+              <Text style={styles.texto}>{item.texto}</Text>
+              <Text style={styles.timestamp}>
+                {new Date(item.timestamp).toLocaleTimeString('pt-BR', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}
+              </Text>
+            </View>
+          )}
+          style={styles.scrollView}
         />
-        <TouchableOpacity style={styles.botao} onPress={enviarMensagem}>
-          <Text style={styles.botaoTexto}>Enviar</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+
+        <View style={styles.inputContainer}>
+          <TextInput 
+            style={styles.input}
+            placeholder="Digite sua mensagem..."
+            placeholderTextColor="#999"
+            value={mensagem}
+            onChangeText={setMensagem}
+          />
+          <TouchableOpacity style={styles.botao} onPress={enviarMensagem}>
+            <Text style={styles.botaoTexto}>Enviar</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
+    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+  },
+  safeArea: {
     flex: 1,
     backgroundColor: '#1a1a1a',
   },

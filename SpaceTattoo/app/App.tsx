@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View, StatusBar, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -78,12 +78,27 @@ export default function App() {
 // Componente interno da tela de Início
 function Inicio({ navigation, route }: { navigation: any; route: any }) {
   const { user } = route.params || {}; 
+  const [searchText, setSearchText] = useState('');
+  const [serviceType, setServiceType] = useState<'todos' | 'servico' | 'local'>('todos');
+  const [maxPrice, setMaxPrice] = useState('');
   
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Header navigation={navigation} />
-        <SelectAnnouncement />
+        <Header 
+          navigation={navigation} 
+          searchText={searchText}
+          setSearchText={setSearchText}
+          serviceType={serviceType}
+          setServiceType={setServiceType}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+        />
+        <SelectAnnouncement 
+          searchText={searchText}
+          serviceType={serviceType}
+          maxPrice={maxPrice}
+        />
         <StatusBar />
       </View>
       <FooterSelection FooterSelection={navigation} />

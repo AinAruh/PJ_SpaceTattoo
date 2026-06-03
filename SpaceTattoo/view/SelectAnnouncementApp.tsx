@@ -16,7 +16,17 @@ export type Announcement = {
   imag3?: string;
 };
 
-export default function SelectAnnouncement() {
+interface SelectAnnouncementProps {
+  searchText?: string;
+  serviceType?: 'todos' | 'servico' | 'local';
+  maxPrice?: string;
+}
+
+export default function SelectAnnouncement({
+  searchText = '',
+  serviceType = 'todos',
+  maxPrice = '',
+}: SelectAnnouncementProps) {
   const navigation = useNavigation<any>();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +52,34 @@ export default function SelectAnnouncement() {
       setLoading(false);
     }
   };
+
+  const filteredAnnouncements = announcements.filter((announcement) => {
+    // Filter by name/title
+    if (searchText && !announcement.title.toLowerCase().includes(searchText.toLowerCase())) {
+      return false;
+    }
+    
+    // Filter by type of service
+    if (serviceType === 'servico' && !announcement.prest_serv) {
+      return false;
+    }
+    if (serviceType === 'local' && !announcement.local) {
+      return false;
+    }
+
+    // Filter by maximum price
+    if (maxPrice) {
+      const priceVal = parseFloat(announcement.valor?.replace(',', '.'));
+      const filterMaxPrice = parseFloat(maxPrice.replace(',', '.'));
+      if (!isNaN(filterMaxPrice)) {
+        if (isNaN(priceVal) || priceVal > filterMaxPrice) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  });
 
   const renderBase64Image = (base64Str: string | null | undefined) => {
     if (!base64Str) return null;
@@ -125,10 +163,10 @@ export default function SelectAnnouncement() {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {announcements.length === 0 ? (
+        {filteredAnnouncements.length === 0 ? (
           <Text style={styles.emptyText}>Não foram encontrados anúncios.</Text>
         ) : (
-          announcements.map((announcement) => {
+          filteredAnnouncements.map((announcement) => {
             const imageSource = renderBase64Image(announcement.imag1);
             return (
               <TouchableOpacity 

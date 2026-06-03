@@ -62,7 +62,7 @@ export default function Login() {
 
               {/* Email Input */}
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>E-mail, CPF ou Usuário</Text>
+                <Text style={styles.label}>Informe o E-mail</Text>
                 <View style={styles.inputWrapper}>
                   <Mail size={20} color="#6b7280" style={styles.inputIcon} />
                   <TextInput 
